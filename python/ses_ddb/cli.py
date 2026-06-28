@@ -27,15 +27,32 @@ def ingest(path: str, embedded: bool = True):
 
 @app.command()
 def rule(rule: str, context: str):
-    rule_data = json.loads(Path(rule).read_text())
-    context_data = json.loads(Path(context).read_text())
+    from ses_ddb.schemas import BridgeInputSchema, BridgeOutputSchema
+    import sys
+    
+    try:
+        rule_data = json.loads(Path(rule).read_text())
+        context_data = json.loads(Path(context).read_text())
+        
+        # Validar con Pydantic antes de enviar al Engine 1 (Rust)
+        validated_input = BridgeInputSchema(rule=rule_data, context=context_data)
+    except Exception as e:
+        print(f"Error de validación Pydantic: {e}", file=sys.stderr)
+        raise typer.Exit(1)
+
     proc = subprocess.run(
         [str(ENGINE1_BIN)],
-        input=json.dumps({"rule": rule_data, "context": context_data}),
+        input=validated_input.model_dump_json(),
         capture_output=True, text=True, check=True
     )
-    result = json.loads(proc.stdout)
-    print(json.dumps(result, indent=2))
+    
+    try:
+        result = BridgeOutputSchema.model_validate_json(proc.stdout)
+        print(result.model_dump_json(indent=2))
+    except Exception as e:
+        print(f"Error parseando salida del Bridge: {e}", file=sys.stderr)
+        print(f"Stdout crudo: {proc.stdout}", file=sys.stderr)
+        raise typer.Exit(1)
 
 @app.command()
 def record(payload: str, rule: str = None, genesis: bool = False,
