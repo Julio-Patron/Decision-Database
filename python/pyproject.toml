@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ses_ddb"
+name = "orchestrator"
 version = "0.1.0"
 description = "Decision Database Unified Project"
 dependencies = [
@@ -20,9 +20,9 @@ dependencies = [
 ]
 
 [project.scripts]
-ses = "ses.server.__main__:main"
-ses-ddb = "ses_ddb.cli:app"
+decision_engine_server = "orchestrator.server.__main__:main"
+orchestrator-cli = "orchestrator_cli.cli:app"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ses*", "ses_ddb*"]
+include = ["orchestrator*"]

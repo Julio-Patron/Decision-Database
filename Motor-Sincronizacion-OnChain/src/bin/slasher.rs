@@ -1,5 +1,5 @@
-use api::blockchain::{BlockchainConfig, B2AStaking, retry_with_backoff};
-use api::storage::{DynamoStorage, MemoryStorage, StorageBackend};
+use motor_sincronizacion_onchain::api::blockchain::{BlockchainConfig, B2AStaking, retry_with_backoff};
+use motor_sincronizacion_onchain::api::storage::{DynamoStorage, MemoryStorage, StorageBackend};
 use alloy_primitives::{Address, U256};
 use std::env;
 use std::sync::Arc;
@@ -34,7 +34,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         if let Ok(address) = user_addr_str.parse::<Address>() {
             // Get on-chain balance - native U256, no conversion
             // Wrapped with retry+backoff for transient RPC failures (Fase 4)
-            let onchain_balance: U256 = retry_with_backoff(|| async { contract.balances(address).call().await }, 3, 500).await?;
+            let onchain_balance_return = retry_with_backoff(|| async { contract.balances(address).call().await }, 3, 500).await?;
+            let onchain_balance = onchain_balance_return._0;
 
             println!("User {}: On-chain: {}, Off-chain: {}", address, onchain_balance, offchain_balance);
 
@@ -47,11 +48,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 if diff > dust_threshold {
                     println!("Slashing {} for user {}", diff, address);
                     // Wrapped send with retry for transient failures (Fase 4 resilience)
-                    match retry_with_backoff(|| async { contract.slash(address, diff).send().await }, 3, 500).await {
+                    match retry_with_backoff(|| async { let call = contract.slash(address, diff); let res = call.send().await; match res { Ok(tx) => Ok(tx.watch().await.unwrap()), Err(e) => Err(e) } }, 3, 500).await {
                         Ok(tx) => {
-                            println!("Slash tx sent: {:?}", tx.tx_hash());
+                            println!("Slash tx sent: {:?}", tx);
                             // Confirmation watch is best-effort (tx may be already confirmed or chain delay); no full retry to avoid consuming
-                            let _ = tx.watch().await;
+
                             println!("Slash tx confirmed (or timeout on watch)!");
                         }
                         Err(e) => eprintln!("Failed to slash {}: {}", address, e),

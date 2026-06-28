@@ -12,6 +12,6 @@ aws-sdk-dynamodb = "1.0"
 aws-sdk-secretsmanager = "1.0"
 aws-config = "1.0"
 alloy-primitives = "0.7"
-alloy = { version = "0.1", features = ["reqwest", "signers"] }
+alloy = { version = "0.1", features = ["reqwest", "signers", "sol-types", "providers", "network", "transport-http", "signer-local", "rpc", "rpc-types-eth", "contract"] }
 thiserror = "1.0"
-tempus-ddb = { path = "../Motor-Base-Datos-Decisiones" }
+core-ledger = { path = "../Motor-Base-Datos-Decisiones" }

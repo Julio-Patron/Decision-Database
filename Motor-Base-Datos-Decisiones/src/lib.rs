@@ -539,7 +539,7 @@ impl StorageLayer for SqliteStorage {
 // --- 3. BINDINGS PARA PYTHON (PYO3) ---
 #[cfg(not(target_arch = "wasm32"))]
 #[pyclass]
-pub struct TempusDDB {
+pub struct CoreLedger {
     storage: SqliteStorage,
     #[allow(dead_code)]
     keyfile: String,
@@ -547,7 +547,7 @@ pub struct TempusDDB {
 
 #[cfg(not(target_arch = "wasm32"))]
 #[pymethods]
-impl TempusDDB {
+impl CoreLedger {
     #[new]
     fn new(db_path: String, keyfile: String) -> PyResult<Self> {
         let storage = SqliteStorage::new(db_path, keyfile.clone())
@@ -559,7 +559,7 @@ impl TempusDDB {
                 .map_err(PyPermissionError::new_err)?;
         }
 
-        Ok(TempusDDB { storage, keyfile })
+        Ok(CoreLedger { storage, keyfile })
     }
 
     #[allow(unused_variables)]
@@ -637,8 +637,8 @@ pub fn gen_keys(output: String) -> PyResult<String> {
 
 #[cfg(not(target_arch = "wasm32"))]
 #[pymodule]
-fn _tempus_ddb(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_class::<TempusDDB>()?;
+fn _core_ledger(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<CoreLedger>()?;
     m.add_function(wrap_pyfunction!(gen_keys, m)?)?;
     Ok(())
 }
@@ -646,18 +646,18 @@ fn _tempus_ddb(m: &Bound<'_, PyModule>) -> PyResult<()> {
 // --- 4. BINDINGS PARA JAVASCRIPT (WASM-BINDGEN) ---
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-pub struct TempusDDBWasm {
+pub struct CoreLedgerWasm {
     storage: MemoryStorage,
     keyfile: String,
 }
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-impl TempusDDBWasm {
+impl CoreLedgerWasm {
     #[wasm_bindgen(constructor)]
-    pub fn new(keyfile: String) -> Result<TempusDDBWasm, JsValue> {
+    pub fn new(keyfile: String) -> Result<CoreLedgerWasm, JsValue> {
         let storage = MemoryStorage::new();
-        Ok(TempusDDBWasm { storage, keyfile })
+        Ok(CoreLedgerWasm { storage, keyfile })
     }
 
     #[wasm_bindgen]

@@ -64,17 +64,17 @@ impl BlockchainConfig {
         }
     }
 
-    pub fn read_provider(&self) -> Arc<impl alloy::providers::Provider> {
-        Arc::new(ProviderBuilder::new().connect_http(self.rpc_url.parse().unwrap()))
+    pub fn read_provider(&self) -> Arc<impl alloy::providers::Provider<alloy::transports::http::Http<alloy::transports::http::Client>, alloy::network::Ethereum>> {
+        Arc::new(ProviderBuilder::new().on_http(self.rpc_url.parse().unwrap()))
     }
 
-    pub fn write_provider(&self) -> Arc<impl alloy::providers::Provider> {
+    pub fn write_provider(&self) -> Arc<impl alloy::providers::Provider<alloy::transports::http::Http<alloy::transports::http::Client>, alloy::network::Ethereum>> {
         let signer: PrivateKeySigner = self.private_key.parse().expect("Invalid private key");
         let wallet = EthereumWallet::from(signer);
         Arc::new(
             ProviderBuilder::new()
                 .wallet(wallet)
-                .connect_http(self.rpc_url.parse().unwrap())
+                .on_http(self.rpc_url.parse().unwrap())
         )
     }
 }
