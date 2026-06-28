@@ -34,16 +34,16 @@ jobs:
           python-version: "3.11"
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-      - name: Install dependencies
+      - name: Install dependencies and build PyO3 extension
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
-          pip install maturin pytest pydantic typer
+          pip install maturin pytest pydantic typer base58
           pip install -e ./python
-      - name: Build and install PyO3 extension
-        run: |
           cd Motor-Base-Datos-Decisiones
           maturin develop --release
       - name: Run Python Demo (Dry Run)
         run: |
-          # Solo verificamos que los imports y el E2E sintácticamente funcionen
+          source .venv/bin/activate
           python python/e2e_demo.py
