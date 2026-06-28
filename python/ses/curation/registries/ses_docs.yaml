@@ -1,0 +1,16 @@
+namespace: public:ses-docs
+publisher: SES
+trust_level: official
+update_policy: on_commit
+sources:
+  - source_id: readme
+    type: local_file
+    path: README.md
+    title: SES README
+    citation_base: README.md
+
+  - source_id: agents
+    type: local_file
+    path: AGENTS.md
+    title: SES Agent Docs
+    citation_base: AGENTS.md

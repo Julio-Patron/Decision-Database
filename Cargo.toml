@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "Motor-Evaluacion-Logica/jsonlogic-fast-core",
+    "Motor-Evaluacion-Logica/tempus-engine-core",
+    "Motor-Evaluacion-Logica/engine_1_bridge",
+    "Motor-Base-Datos-Decisiones",
+    "Motor-Sincronizacion-OnChain"
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+authors = ["DDB Team"]
+homepage = "https://github.com/DDB/ddb"
+repository = "https://github.com/DDB/ddb"
+
+[workspace.dependencies]
+serde_json = "1.0"

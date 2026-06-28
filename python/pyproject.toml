@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ses_ddb"
+version = "0.1.0"
+description = "Decision Database Unified Project"
+dependencies = [
+    "typer>=0.9.0",
+    "fastapi>=0.104.0",
+    "uvicorn>=0.23.2",
+    "pydantic>=2.4.2",
+    "sentence-transformers>=2.2.2",
+    "qdrant-client>=1.12.0",
+    "numpy>=1.26.0",
+    "solana>=0.36.0,<1",
+    "solders>=0.27.0,<1",
+]
+
+[project.scripts]
+ses = "ses.server.__main__:main"
+ses-ddb = "ses_ddb.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ses*", "ses_ddb*"]
