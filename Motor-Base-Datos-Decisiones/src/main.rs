@@ -6,8 +6,8 @@ use std::io::Write;
 use std::time::SystemTime;
 
 #[derive(Parser)]
-#[command(name = "tempus-ddb")]
-#[command(about = "Tempus DDB Core (Edge Version) - Decentralized Decision Ledger", long_about = None)]
+#[command(name = "core-ledger")]
+#[command(about = "Core Ledger Core (Edge Version) - Decentralized Decision Ledger", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -17,7 +17,7 @@ struct Cli {
 enum Commands {
     /// Initialize the SQLite database schema
     Init {
-        #[arg(long, default_value = "tempus_ddb.db")]
+        #[arg(long, default_value = "core_ledger.db")]
         db: String,
     },
     /// Generate a new Ed25519 cryptographic keypair
@@ -27,7 +27,7 @@ enum Commands {
     },
     /// Record a new decision in the local ledger
     Record {
-        #[arg(long, default_value = "tempus_ddb.db")]
+        #[arg(long, default_value = "core_ledger.db")]
         db: String,
 
         /// JSON payload representing inputs/outputs/decisions
@@ -52,12 +52,12 @@ enum Commands {
     },
     /// Walk the database to verify the integrity and cryptographic authenticity of the chain
     Validate {
-        #[arg(long, default_value = "tempus_ddb.db")]
+        #[arg(long, default_value = "core_ledger.db")]
         db: String,
     },
     /// List recorded decisions in chronological order
     List {
-        #[arg(long, default_value = "tempus_ddb.db")]
+        #[arg(long, default_value = "core_ledger.db")]
         db: String,
 
         #[arg(long)]
@@ -65,7 +65,7 @@ enum Commands {
     },
     /// Export all decisions as a JSON array for cloud synchronization
     Export {
-        #[arg(long, default_value = "tempus_ddb.db")]
+        #[arg(long, default_value = "core_ledger.db")]
         db: String,
     },
 }

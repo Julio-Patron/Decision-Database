@@ -1,5 +1,5 @@
-use api::blockchain::{BlockchainConfig, B2AStaking, retry_with_backoff};
-use api::storage::{DynamoStorage, MemoryStorage, StorageBackend};
+use motor_sincronizacion_onchain::api::blockchain::{BlockchainConfig, B2AStaking, retry_with_backoff};
+use motor_sincronizacion_onchain::api::storage::{DynamoStorage, MemoryStorage, StorageBackend};
 use alloy::providers::Provider;
 use alloy::rpc::types::eth::Filter;
 use alloy::sol_types::SolEvent;
@@ -62,7 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut last_block: u64 = match storage.get_last_sync_block().await {
         Ok(b) => b,
         Err(e) => {
-            log_error("get_last_block_failed", Some(json!({ "error": e })));
+            log_error("get_last_block_failed", Some(json!({ "error": e.to_string() })));
             0
         }
     };
@@ -75,7 +75,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 log_info("first_run_backfill", Some(json!({ "start_block": last_block })));
             }
             Err(e) => {
-                log_error("get_latest_block_failed", Some(json!({ "error": e.to_string() })));
+                log_error("get_latest_block_failed", Some(json!({ "error": e.to_string().to_string() })));
                 return Ok(());
             }
         }
@@ -86,7 +86,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let latest = match retry_with_backoff(|| async { provider.get_block_number().await }, 3, 500).await {
         Ok(n) => n,
         Err(e) => {
-            log_error("get_latest_block_failed", Some(json!({ "error": e.to_string() })));
+            log_error("get_latest_block_failed", Some(json!({ "error": e.to_string().to_string() })));
             return Ok(());
         }
     };
@@ -115,7 +115,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let logs = match retry_with_backoff(|| async { provider.get_logs(&filter).await }, 3, 500).await {
         Ok(l) => l,
         Err(e) => {
-            log_error("get_logs_failed", Some(json!({ "error": e.to_string(), "from": from_block, "to": to_block })));
+            log_error("get_logs_failed", Some(json!({ "error": e.to_string().to_string(), "from": from_block, "to": to_block })));
             return Ok(()); // No avanzar cursor para reintento
         }
     };
@@ -127,22 +127,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     for log_entry in logs {
         if let Ok(decoded) = log_entry.log_decode::<B2AStaking::Deposited>() {
             let event = decoded.inner.data;
-            let user = event.user.to_string();
+            let user_addr = event.user; let user = user_addr.to_string();
             let amount: U256 = event.amount;
             let block_num = log_entry.block_number.unwrap_or_default();
 
             log_info("deposit_detected", Some(json!({
-                "user": user,
+                "user": user.to_string(),
                 "amount": amount.to_string(),
                 "block": block_num
             })));
 
-            if let Err(e) = storage.add_balance(&user, amount).await {
+            if let Err(e) = storage.add_balance(&user_addr, amount).await {
                 log_error("add_balance_failed", Some(json!({
-                    "user": user,
+                    "user": user.to_string(),
                     "amount": amount.to_string(),
                     "block": block_num,
-                    "error": e
+                    "error": e.to_string()
                 })));
                 failures += 1;
                 // No avanzamos para este evento; reintentar en próxima ejecución
@@ -159,7 +159,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Persistir progreso solo si hubo avances
     if highest_processed > last_block {
         if let Err(e) = storage.set_last_sync_block(highest_processed).await {
-            log_error("persist_last_block_failed", Some(json!({ "error": e, "block": highest_processed })));
+            log_error("persist_last_block_failed", Some(json!({ "error": e.to_string(), "block": highest_processed })));
         } else {
             log_info("last_block_saved", Some(json!({ "block": highest_processed })));
         }

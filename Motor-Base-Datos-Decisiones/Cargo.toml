@@ -1,17 +1,17 @@
 [package]
-name = "tempus-ddb"
+name = "core-ledger"
 version = "0.2.1"
 description = "Free, local-first, tamper-evident decision ledger for AI agents"
 license = "MIT"
-repository = "https://github.com/JPatronC92/tempus-ddb"
-authors = ["Tempus DDB Contributors"]
+repository = "https://github.com/JPatronC92/core-ledger"
+authors = ["Core Ledger Contributors"]
 readme = "../README.md"
 keywords = ["ai", "agents", "ledger", "audit", "mcp"]
 categories = ["command-line-utilities", "database"]
 edition = "2021"
 
 [lib]
-name = "_tempus_ddb"
+name = "_core_ledger"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]

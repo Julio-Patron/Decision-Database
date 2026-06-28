@@ -14,7 +14,7 @@ def main():
     print("=========================================")
     print("1. Ingesta (Engine 2)")
     try:
-        from ses.agent import RAG
+        from orchestrator.agent import RAG
         rag = RAG(embedded=True)
         print("  [OK] RAG Engine importado")
     except ImportError as e:
@@ -28,8 +28,8 @@ def main():
 
     print("3. Registro (Engine 5)")
     try:
-        from _tempus_ddb import TempusDDB
-        print("  [OK] PyO3 TempusDDB importado")
+        from _core_ledger import CoreLedger
+        print("  [OK] PyO3 CoreLedger importado")
     except ImportError as e:
         print(f"  [ERROR] Error DDB: {e}")
 
