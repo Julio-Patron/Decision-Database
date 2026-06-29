@@ -4,7 +4,7 @@ members = [
     "Motor-Evaluacion-Logica/logic-evaluator-core",
     "Motor-Evaluacion-Logica/engine_1_bridge",
     "Motor-Base-Datos-Decisiones",
-    # "Motor-Sincronizacion-OnChain", # Desactivado temporalmente porque es legacy y falla en la compilación
+    "Motor-Sincronizacion-OnChain",
 ]
 resolver = "2"
 

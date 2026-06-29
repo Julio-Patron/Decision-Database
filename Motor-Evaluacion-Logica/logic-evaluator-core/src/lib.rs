@@ -50,8 +50,8 @@ pub use logic_core::extract::extract_f64;
 #[doc(inline)]
 pub use logic_core::{
     evaluate, evaluate_batch, evaluate_batch_detailed, evaluate_batch_numeric,
-    evaluate_batch_numeric_detailed, evaluate_numeric, evaluate_rule,
-    validate_rule, EvaluationResult, NumericEvaluationResult,
+    evaluate_batch_numeric_detailed, evaluate_numeric, evaluate_rule, validate_rule,
+    EvaluationResult, NumericEvaluationResult,
 };
 
 #[doc(inline)]

@@ -550,8 +550,8 @@ pub struct CoreLedger {
 impl CoreLedger {
     #[new]
     fn new(db_path: String, keyfile: String) -> PyResult<Self> {
-        let storage = SqliteStorage::new(db_path, keyfile.clone())
-            .map_err(|e| PyPermissionError::new_err(e))?;
+        let storage =
+            SqliteStorage::new(db_path, keyfile.clone()).map_err(PyPermissionError::new_err)?;
 
         if std::path::Path::new(&keyfile).exists() {
             storage
@@ -563,11 +563,12 @@ impl CoreLedger {
     }
 
     #[allow(unused_variables)]
+    #[allow(clippy::useless_conversion)]
     #[pyo3(signature = (payload, rules, genesis=false))]
     fn record(&mut self, payload: &str, rules: &str, genesis: bool) -> PyResult<String> {
         self.storage
             .insert_decision(payload, rules, genesis)
-            .map_err(|e| PyPermissionError::new_err(e))?;
+            .map_err(PyPermissionError::new_err)?;
 
         let result_json = format!(
             r#"{{"status": "success", "action": "recorded", "latest_hash": "{}"}}"#,
@@ -576,24 +577,27 @@ impl CoreLedger {
         Ok(result_json)
     }
 
+    #[allow(clippy::useless_conversion)]
     #[pyo3(signature = ())]
     fn validate(&self) -> PyResult<String> {
         self.storage
             .validate_ledger()
-            .map_err(|e| PyRuntimeError::new_err(e))
+            .map_err(PyRuntimeError::new_err)
     }
 
+    #[allow(clippy::useless_conversion)]
     #[pyo3(signature = ())]
     fn export(&self) -> PyResult<String> {
         self.storage
             .export_ledger()
-            .map_err(|e| PyRuntimeError::new_err(e))
+            .map_err(PyRuntimeError::new_err)
     }
 }
 
 #[cfg(not(target_arch = "wasm32"))]
 #[pyfunction]
-pub fn gen_keys(output: String) -> PyResult<String> {
+#[allow(clippy::useless_conversion)]
+pub fn gen_keys(output: String) -> pyo3::PyResult<String> {
     use ed25519_dalek::SigningKey;
     use rand::rngs::OsRng;
     use std::fs::File;
