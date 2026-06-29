@@ -5,7 +5,10 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ENGINE1_BRIDGE = BASE_DIR / "target" / "release" / "engine_1_bridge.exe"
+import sys
+
+engine_1_bridge_name = "engine_1_bridge.exe" if sys.platform == "win32" else "engine_1_bridge"
+ENGINE1_BRIDGE = BASE_DIR / "target" / "release" / engine_1_bridge_name
 LEDGER_PATH = BASE_DIR / "_e2e_demo_ledger.sqlite"
 KEY_PATH = BASE_DIR / "_e2e_demo_keypair.json"
 

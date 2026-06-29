@@ -1,8 +1,8 @@
-use std::io::{self, Read};
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use logic_evaluator::metadata::RuleDefinition;
 use logic_evaluator::{execute_explain, ExplainResult};
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::io::{self, Read};
 
 #[derive(Deserialize)]
 struct DecisionInput {
@@ -21,7 +21,9 @@ struct DecisionContext {
 
 fn main() {
     let mut input_str = String::new();
-    io::stdin().read_to_string(&mut input_str).expect("stdin read error");
+    io::stdin()
+        .read_to_string(&mut input_str)
+        .expect("stdin read error");
 
     let input: DecisionInput = match serde_json::from_str(&input_str) {
         Ok(v) => v,

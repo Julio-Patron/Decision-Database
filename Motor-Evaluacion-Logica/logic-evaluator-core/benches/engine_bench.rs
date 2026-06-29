@@ -1,7 +1,8 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use serde_json::json;
+use criterion::{criterion_group, criterion_main, Criterion};
 use logic_evaluator::metadata::RuleDefinition;
 use logic_evaluator::{execute, execute_batch, execute_chain, execute_explain, RuleStore};
+use serde_json::json;
+use std::hint::black_box;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fixtures
