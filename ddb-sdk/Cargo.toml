@@ -1,0 +1,28 @@
+[package]
+name = "ddb-sdk"
+version = "0.1.0"
+description = "Decision Database SDK — unified Rust API for ledger, rules, on-chain, and vector engines"
+license = "MIT"
+edition = "2021"
+rust-version = "1.75"
+
+[lib]
+name = "ddb_sdk"
+crate-type = ["rlib"]
+
+[dependencies]
+# Ledger engine
+core-ledger = { path = "../Motor-Base-Datos-Decisiones" }
+
+# Rules engine
+logic-core = { path = "../Motor-Evaluacion-Logica/logic-core-lib" }
+logic-evaluator = { path = "../Motor-Evaluacion-Logica/logic-evaluator-core" }
+
+# On-chain engine
+motor_sincronizacion_onchain = { path = "../Motor-Sincronizacion-OnChain" }
+alloy-primitives = "0.7"
+
+# SDK utilities
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"

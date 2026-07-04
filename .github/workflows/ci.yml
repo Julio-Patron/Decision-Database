@@ -1,4 +1,4 @@
-name: Tempus DDB CI
+name: DDB CI
 
 on:
   push:
@@ -22,28 +22,3 @@ jobs:
         run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Run tests
         run: cargo test --workspace
-
-  python-tests:
-    name: Python Tests & Maturin Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Install dependencies and build PyO3 extension
-        run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install maturin pytest pydantic typer base58
-          pip install -e ./python
-          cd Motor-Base-Datos-Decisiones
-          maturin develop --release
-      - name: Run Python Demo (Dry Run)
-        run: |
-          source .venv/bin/activate
-          python python/e2e_demo.py
