@@ -43,3 +43,7 @@ venv.bak/
 
 # Keys
 *keypair.json
+
+# DDB CLI build output
+ddb.exe
+ddb-cli/target/

@@ -1,9 +1,10 @@
 [workspace]
 members = [
+    "ddb-sdk",
+    "ddb-cli",
+    "Motor-Base-Datos-Decisiones",
     "Motor-Evaluacion-Logica/logic-core-lib",
     "Motor-Evaluacion-Logica/logic-evaluator-core",
-    "Motor-Evaluacion-Logica/engine_1_bridge",
-    "Motor-Base-Datos-Decisiones",
     "Motor-Sincronizacion-OnChain",
 ]
 resolver = "2"
